@@ -1,0 +1,4 @@
+.history/
+build/
+kayopy.egg-info/
+kayopy/__pycache__/
