@@ -3,7 +3,7 @@ import requests
 import webbrowser
 import urllib.parse
 
-VERSION = '1.0.1'
+VERSION = '1.0.2'
 AUTHOR = 'GrenManSK'
 
 SITE = 'https://kayoanime.com/'
@@ -50,6 +50,7 @@ def search(url):
 
 class ParseSite:
     def __init__(self, url, type=None):
+        print(f'Parging site {url} ...', end='\r')
         self.url = url
         self.instance = requests.get(self.url)
         self.parser = BeautifulSoup(self.instance.text, 'html.parser')
@@ -93,6 +94,7 @@ class ParseSite:
             self.type = 'casual'
         if type is not None:
             self.type = type
+        print(f'Parging site {url} DONE')
 
     def __str__(self) -> str:
         return self.instance.text

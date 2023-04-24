@@ -7,7 +7,7 @@ setup(
     version=VERSION,
     description='kayopy',
     author=AUTHOR,
-    install_requires=['bs4'],
+    install_requires=['beautifulsoup4'],
     packages=find_packages(exclude=('tests*', 'testing*')),
     entry_points={
         'console_scripts': [
