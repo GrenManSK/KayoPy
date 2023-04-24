@@ -55,7 +55,6 @@ class ParseSite:
         self.instance = requests.get(self.url)
         self.parser = BeautifulSoup(self.instance.text, 'html.parser')
         self.title = self.parser.title.text
-        print(self.title)
         div = self.title.split(' ')
         top = False
         missing = False
@@ -124,9 +123,11 @@ class ParseSite:
 
 class HomePage:
     def __init__(self, url):
+        print(f'Parsing site {url} ...', end='\r')
         self.url = url
         self.instance = requests.get(self.url)
         self.parser = BeautifulSoup(self.instance.text, 'html.parser')
+        print(f'Parsing site {url} DONE')
 
     def __str__(self) -> str:
         return self.instance.text
