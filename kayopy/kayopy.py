@@ -51,16 +51,22 @@ def search(url):
                         f'You will be transferred to \'{dow_link}\'. Continue? (Y/n) > ')
                     if vstup in ['', 'Y', 'y']:
                         webbrowser.open(dow_link)
-        if args.AutoDownload is None:
-            vstup = input(
-                f'Do you want to download content of folder? (Y/n) > ')
-            if vstup in ['', 'Y', 'y']:
-                if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
-                    gdown.download_folder(id=dow_link.split('\\')[-1],
-                                          output=filedialog.askdirectory(), quiet=False)
-                else:
-                    gdown.download_folder(id=dow_link.split('\\')[-1],
-                                          output=args.OutputFolder, quiet=False)
+        try:
+            if args.AutoDownload is None:
+                vstup = input(
+                    f'Do you want to download content of folder? (Y/n) > ')
+                if vstup in ['', 'Y', 'y']:
+                    html_parser = BeautifulSoup(
+                        requests.get(dow_link).text, 'html.parser')
+                    title = html_parser.title.text.split('–')[0][:-1]
+                    if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
+                        gdown.download_folder(id=dow_link.split('\\')[-1],
+                                              output=filedialog.askdirectory(), quiet=False)
+                    else:
+                        gdown.download_folder(id=dow_link.split('\\')[-1],
+                                              output=f"{title}/{args.OutputFolder}", quiet=False)
+        except NameError:
+            pass
 
 
 class ParseSite:
