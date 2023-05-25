@@ -1,13 +1,18 @@
 from bs4 import BeautifulSoup
 import requests
 import webbrowser
+import argparse
+import gdown
+from tkinter import filedialog
 import urllib.parse
 
-VERSION = '1.0.2'
+VERSION = '1.0.3'
 AUTHOR = 'GrenManSK'
 
 SITE = 'https://kayoanime.com/'
 SITE_SEARCH = 'https://kayoanime.com/?s='
+
+UNSPECIFIED = object()
 
 
 def search(url):
@@ -46,6 +51,16 @@ def search(url):
                         f'You will be transferred to \'{dow_link}\'. Continue? (Y/n) > ')
                     if vstup in ['', 'Y', 'y']:
                         webbrowser.open(dow_link)
+        if args.AutoDownload is None:
+            vstup = input(
+                f'Do you want to download content of folder? (Y/n) > ')
+            if vstup in ['', 'Y', 'y']:
+                if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
+                    gdown.download_folder(id=dow_link.split('\\')[-1],
+                                          output=filedialog.askdirectory(), quiet=False)
+                else:
+                    gdown.download_folder(id=dow_link.split('\\')[-1],
+                                          output=args.OutputFolder, quiet=False)
 
 
 class ParseSite:
@@ -200,4 +215,12 @@ def main():
 
 
 if __name__ == '__main__':
+
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-ad', '--AutoDownload',
+                        default=UNSPECIFIED, nargs='?')
+    parser.add_argument('-of', '--OutputFolder',
+                        default=UNSPECIFIED, nargs='?')
+    args = parser.parse_args()
+
     main()
