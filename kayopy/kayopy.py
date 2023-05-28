@@ -160,6 +160,14 @@ class HomePage:
 
 
 def main():
+    global args
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-ad', '--AutoDownload',
+                        default=UNSPECIFIED, nargs='?')
+    parser.add_argument('-of', '--OutputFolder',
+                        default=UNSPECIFIED, nargs='?')
+    args = parser.parse_args()
+
     print(f'KayoPy {VERSION}')
     print(f'Using: \'{SITE}\'')
     home = HomePage(SITE)
@@ -221,12 +229,4 @@ def main():
 
 
 if __name__ == '__main__':
-
-    parser = argparse.ArgumentParser()
-    parser.add_argument('-ad', '--AutoDownload',
-                        default=UNSPECIFIED, nargs='?')
-    parser.add_argument('-of', '--OutputFolder',
-                        default=UNSPECIFIED, nargs='?')
-    args = parser.parse_args()
-
     main()
