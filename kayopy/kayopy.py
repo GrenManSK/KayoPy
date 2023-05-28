@@ -61,7 +61,7 @@ def search(url):
                     title = html_parser.title.text.split('–')[0][:-1]
                     if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
                         gdown.download_folder(id=dow_link.split('\\')[-1],
-                                              output=filedialog.askdirectory(), quiet=False)
+                                              output=filedialog.askdirectory() + title, quiet=False)
                     else:
                         gdown.download_folder(id=dow_link.split('\\')[-1],
                                               output=f"{args.OutputFolder}/{title}", quiet=False)
