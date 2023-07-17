@@ -69,12 +69,14 @@ def search(url):
                             id=dow_link.split("\\")[-1],
                             output=filedialog.askdirectory() + "\\" + title,
                             quiet=False,
+                            remaining_ok=True,
                         )
                     else:
                         gdown.download_folder(
                             id=dow_link.split("\\")[-1],
                             output=f"{args.OutputFolder}/{title}",
                             quiet=False,
+                            remaining_ok=True,
                         )
         except NameError:
             pass
