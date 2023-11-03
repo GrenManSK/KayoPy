@@ -1,6 +1,6 @@
 from setuptools import setup
 from setuptools import find_packages
-from kayopy.kayopy import VERSION, AUTHOR
+from kayopy import VERSION, AUTHOR
 
 setup(
     name="kayopy",

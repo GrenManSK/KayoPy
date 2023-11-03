@@ -2,3 +2,4 @@
 build/
 kayopy.egg-info/
 kayopy/__pycache__/
+.vscode/
