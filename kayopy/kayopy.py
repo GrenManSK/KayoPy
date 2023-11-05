@@ -167,12 +167,12 @@ def main():
 
     print(f"KayoPy {VERSION}")
     print(f"Using: '{SITE}'")
-    home = HomePage(SITE)
 
     while True:
         vstup = input("> ")
 
         if vstup == "grec":
+            home = HomePage(SITE)
             recomendations = home.get("recommendations")
             for times, item in enumerate(recomendations):
                 print(f"{times + 1}) {item['aria-label']}")
