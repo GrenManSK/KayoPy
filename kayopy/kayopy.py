@@ -51,7 +51,14 @@ def search(url):
                     html_parser = BeautifulSoup(
                         requests.get(dow_link).text, "html.parser"
                     )
-                    title = html_parser.title.text.split("–")[0][:-1]
+                    title = (
+                        html_parser.title.text.split("–")[0][:-1]
+                        .replace(":", "")
+                        .replace("!", "")
+                        .replace("\\", "")
+                        .replace("/", "")
+                        .replace("@", "")
+                    )
                     if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
                         gdown.download_folder(
                             id=dow_link.split("\\")[-1],
