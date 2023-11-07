@@ -6,7 +6,10 @@ import argparse
 import gdown
 from tkinter import filedialog
 import urllib.parse
-from kayopy.__init__ import VERSION
+try:
+    from kayopy.__init__ import VERSION
+except ImportError:
+    VERSION = "UNEXPECTED ERROR"
 
 SITE = "https://kayoanime.com/"
 SITE_SEARCH = "https://kayoanime.com/?s="
@@ -177,8 +180,11 @@ def main():
 
     while True:
         vstup = input("> ")
-
-        if vstup == "grec":
+        if vstup in ["q", "quit"]:
+            break
+        elif vstup == "" or len(vstup) <= 1:
+            continue
+        elif vstup == "grec":
             home = HomePage(SITE)
             recomendations = home.get("recommendations")
             for times, item in enumerate(recomendations):
@@ -186,7 +192,6 @@ def main():
             vstup = input("Select anime > ")
             if not vstup.isnumeric():
                 continue
-
             links = ParseSite(recomendations[int(vstup) - 1]["href"]).get("dow_link")
             if len(links) == 1:
                 print(links[0].text)
@@ -224,8 +229,6 @@ def main():
         elif vstup == "request":
             webbrowser.open("https://kayoanime.com/requested-anime/")
 
-        elif vstup in ["q", "quit"]:
-            break
         else:
             search(vstup)
 
