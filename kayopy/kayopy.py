@@ -6,6 +6,10 @@ import argparse
 import gdown
 from tkinter import filedialog
 import urllib.parse
+import os
+import glob
+import shutil
+
 try:
     from kayopy.__init__ import VERSION
 except ImportError:
@@ -63,16 +67,38 @@ def search(url):
                         .replace("@", "")
                     )
                     if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
-                        gdown.download_folder(
-                            id=dow_link.split("\\")[-1],
-                            output=filedialog.askdirectory() + "\\" + title,
-                            quiet=False,
-                            remaining_ok=True,
+                        where = filedialog.askdirectory() + "\\" + title
+                        sess = gdown._get_session(False, False)
+                        try:
+                            (
+                                return_code,
+                                gdrive_file,
+                            ) = gdown._download_and_parse_google_drive_link(
+                                sess,
+                                dow_link,
+                            )
+                        except RuntimeError:
+                            os.system(f"start firefox {dow_link}")
+                            return
+                        directory_structure = gdown._get_directory_structure(
+                            gdrive_file, os.getcwd()
                         )
-                    else:
+                        for link in directory_structure:
+                            filename = gdown.download(
+                                url=f"https://drive.google.com/uc?id={link[0]}"
+                            )
+                            if filename is None:
+                                before = glob.glob("C:\\Users\\richard\\Downloads\\*")
+                                os.system(f"start firefox {dow_link}")
+                                input("Wait after u download fully file")
+                                after = glob.glob("C:\\Users\\richard\\Downloads\\*")
+                                now = [i for i in after if i not in before]
+                                shutil.move(
+                                    now[0], f"{where}/{os.path.basename(now[0])}"
+                                )
                         gdown.download_folder(
                             id=dow_link.split("\\")[-1],
-                            output=f"{args.OutputFolder}/{title}",
+                            output=where,
                             quiet=False,
                             remaining_ok=True,
                         )
@@ -186,13 +212,13 @@ def main():
             continue
         elif vstup == "grec":
             home = HomePage(SITE)
-            recomendations = home.get("recommendations")
-            for times, item in enumerate(recomendations):
+            recommendations = home.get("recommendations")
+            for times, item in enumerate(recommendations):
                 print(f"{times + 1}) {item['aria-label']}")
             vstup = input("Select anime > ")
             if not vstup.isnumeric():
                 continue
-            links = ParseSite(recomendations[int(vstup) - 1]["href"]).get("dow_link")
+            links = ParseSite(recommendations[int(vstup) - 1]["href"]).get("dow_link")
             if len(links) == 1:
                 print(links[0].text)
                 dow_link = links[0]["href"]
