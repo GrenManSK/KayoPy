@@ -96,6 +96,9 @@ def search(url):
                                 shutil.move(
                                     now[0], f"{where}/{os.path.basename(now[0])}"
                                 )
+                            else:
+                                os.makedirs(where, exist_ok=True)
+                                shutil.move(filename, f"{where}\\{filename}")
                         gdown.download_folder(
                             id=dow_link.split("\\")[-1],
                             output=where,
