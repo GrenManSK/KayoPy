@@ -9,6 +9,7 @@ import urllib.parse
 import os
 import glob
 import shutil
+from tqdm import tqdm
 
 try:
     from kayopy.__init__ import VERSION
@@ -19,6 +20,46 @@ SITE = "https://kayoanime.com/"
 SITE_SEARCH = "https://kayoanime.com/?s="
 
 UNSPECIFIED = object()
+
+
+def get_directory_size(path="."):
+    total_size = 0
+    for dirpath, _dirnames, filenames in os.walk(path):
+        for filename in filenames:
+            filepath = os.path.join(dirpath, filename)
+            total_size += os.path.getsize(filepath)
+    return total_size
+
+
+def move_with_progress(source, destination):
+    if not os.path.exists(source):
+        print(f"Source directory '{source}' does not exist.")
+        return
+
+    os.makedirs(destination, exist_ok=True)
+
+    files_to_move = [
+        f for f in os.listdir(source) if os.path.isfile(os.path.join(source, f))
+    ]
+
+    total_size = get_directory_size(source)
+
+    progress_bar = tqdm(
+        total=total_size, unit="B", unit_scale=True, desc="Moving Files"
+    )
+
+    for file_name in files_to_move:
+        source_file_path = os.path.join(source, file_name)
+        destination_file_path = os.path.join(destination, file_name)
+
+        try:
+            shutil.move(source_file_path, destination_file_path)
+        except Exception as e:
+            print(f"Error moving file '{file_name}': {e}")
+        finally:
+            progress_bar.update(os.path.getsize(destination_file_path))
+
+    progress_bar.close()
 
 
 def search(url):
@@ -67,7 +108,8 @@ def search(url):
                         .replace("@", "")
                     )
                     if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
-                        where = filedialog.askdirectory() + "\\" + title
+                        where_base = filedialog.askdirectory()
+                        where = where_base + "\\" + title
                         sess = gdown._get_session(False, False)
                         try:
                             (
@@ -89,22 +131,24 @@ def search(url):
                             )
                             if filename is None:
                                 before = glob.glob("C:\\Users\\richard\\Downloads\\*")
+                                input("You will now download download files as zip")
                                 os.system(f"start firefox {dow_link}")
-                                input("Wait after u download fully file")
+                                input("Wait after u download fully zip and extract it")
                                 after = glob.glob("C:\\Users\\richard\\Downloads\\*")
                                 now = [i for i in after if i not in before]
-                                shutil.move(
-                                    now[0], f"{where}/{os.path.basename(now[0])}"
+                                move_with_progress(
+                                    now[0], f"{where_base}/{os.path.basename(now[0])}"
                                 )
+                                break
                             else:
                                 os.makedirs(where, exist_ok=True)
                                 shutil.move(filename, f"{where}\\{filename}")
-                        gdown.download_folder(
-                            id=dow_link.split("\\")[-1],
-                            output=where,
-                            quiet=False,
-                            remaining_ok=True,
-                        )
+                        # gdown.download_folder(
+                        #     id=dow_link.split("\\")[-1],
+                        #     output=where,
+                        #     quiet=False,
+                        #     remaining_ok=True,
+                        # )
 
 
 def transfer_to_page(links, vstup, arg2):
