@@ -139,6 +139,7 @@ def search(url):
                                 move_with_progress(
                                     now[0], f"{where_base}/{os.path.basename(now[0])}"
                                 )
+                                os.rmdir(now[0])
                                 break
                             else:
                                 os.makedirs(where, exist_ok=True)
