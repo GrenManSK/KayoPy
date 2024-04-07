@@ -300,6 +300,67 @@ def main():
                     )
                     if vstup in ["", "Y", "y"]:
                         webbrowser.open(dow_link)
+            with contextlib.suppress(NameError):
+                if args.AutoDownload is None:
+                    vstup = input("Do you want to download content of folder? (Y/n) > ")
+                    if vstup in ["", "Y", "y"]:
+                        html_parser = BeautifulSoup(
+                            requests.get(dow_link).text, "html.parser"
+                        )
+                        title = (
+                            html_parser.title.text.split("–")[0][:-1]
+                            .replace(":", "")
+                            .replace("!", "")
+                            .replace("\\", "")
+                            .replace("/", "")
+                            .replace("@", "")
+                        )
+                        if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
+                            where_base = filedialog.askdirectory()
+                            where = where_base + "\\" + title
+                            sess = gdown._get_session(False, False, "/")
+                            try:
+                                (
+                                    return_code,
+                                    gdrive_file,
+                                ) = gdown._download_and_parse_google_drive_link(
+                                    sess,
+                                    dow_link,
+                                )
+                            except RuntimeError:
+                                os.system(f"start firefox {dow_link}")
+                                return
+                            directory_structure = gdown._get_directory_structure(
+                                gdrive_file, os.getcwd()
+                            )
+                            for link in directory_structure:
+                                try:
+                                    filename = gdown.download(
+                                        url=f"https://drive.google.com/uc?id={link[0]}"
+                                    )
+                                except gdown.exceptions.FileURLRetrievalError:
+                                    filename = None
+                                if filename is None:
+                                    before = glob.glob("C:\\Users\\richard\\Downloads\\*")
+                                    input("You will now download download files as zip")
+                                    os.system(f"start firefox {dow_link}")
+                                    input("Wait after u download fully zip and extract it")
+                                    after = glob.glob("C:\\Users\\richard\\Downloads\\*")
+                                    now = [i for i in after if i not in before]
+                                    move_with_progress(
+                                        now[0], f"{where_base}/{os.path.basename(now[0])}"
+                                    )
+                                    os.rmdir(now[0])
+                                    break
+                                else:
+                                    os.makedirs(where, exist_ok=True)
+                                    shutil.move(filename, f"{where}\\{filename}")
+                            # gdown.download_folder(
+                            #     id=dow_link.split("\\")[-1],
+                            #     output=where,
+                            #     quiet=False,
+                            #     remaining_ok=True,
+                            # )
         elif vstup == "report":
             webbrowser.open("https://kayoanime.com/report-dead-link/")
 
