@@ -110,7 +110,7 @@ def search(url):
                     if args.OutputFolder is None or args.OutputFolder is UNSPECIFIED:
                         where_base = filedialog.askdirectory()
                         where = where_base + "\\" + title
-                        sess = gdown._get_session(False, False)
+                        sess = gdown._get_session(False, False, "/")
                         try:
                             (
                                 return_code,
@@ -126,9 +126,12 @@ def search(url):
                             gdrive_file, os.getcwd()
                         )
                         for link in directory_structure:
-                            filename = gdown.download(
-                                url=f"https://drive.google.com/uc?id={link[0]}"
-                            )
+                            try:
+                                filename = gdown.download(
+                                    url=f"https://drive.google.com/uc?id={link[0]}"
+                                )
+                            except gdown.exceptions.FileURLRetrievalError:
+                                filename = None
                             if filename is None:
                                 before = glob.glob("C:\\Users\\richard\\Downloads\\*")
                                 input("You will now download download files as zip")
